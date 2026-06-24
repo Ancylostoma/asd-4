@@ -1,0 +1,6 @@
+{
+  "name": "LaundryManager Offline (Daily Reset)",
+  "description": "An offline-first, local SQLite-driven Laundry order-tracking and accounting application characterized by a clean blue aesthetic, call dialer integration, itemized catalog pricing, and a double-confirmation daily reset function.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
