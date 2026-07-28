@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.AndroidViewModel
 import java.util.Calendar
 
 class LaundryViewModel(application: Application) : AndroidViewModel(application) {
@@ -363,7 +365,9 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     fun wipeAllData(resetCatalog: Boolean) {
         viewModelScope.launch {
             repository.wipeAllForToday(resetCatalog)
-            // ── Exportar reporte Excel ────────────────────────────────────
+        }
+    }
+
     fun exportExcelReport(period: ExcelReportManager.ReportPeriod) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -376,8 +380,6 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-    }
         }
     }
 }
