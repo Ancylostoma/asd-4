@@ -2,6 +2,7 @@ package com.example.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import com.example.util.ExcelReportManager
 import androidx.compose.animation.*
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
@@ -252,11 +253,12 @@ fun MainScreen(viewModel: LaundryViewModel) {
                         onDeleteOrder = { o -> viewModel.deleteOrder(o) }
                     )
                     1 -> AccountingTabContent(
-                        orders = orders,
-                        expenses = expenses,
-                        onAddExpense = { desc, amount -> viewModel.addExpense(desc, amount) },
-                        onDeleteExpense = { exp -> viewModel.deleteExpense(exp) }
-                    )
+    orders = orders,
+    expenses = expenses,
+    onAddExpense = { desc, amount -> viewModel.addExpense(desc, amount) },
+    onDeleteExpense = { exp -> viewModel.deleteExpense(exp) },
+    onExportReport = { period -> viewModel.exportExcelReport(period) }
+)
                     2 -> SettingsTabContent(
                         catalogItems = catalogItems,
                         onAddCatalogItem = { name, price -> viewModel.addCatalogItem(name, price) },
@@ -814,7 +816,8 @@ fun AccountingTabContent(
     orders: List<Order>,
     expenses: List<Expense>,
     onAddExpense: (String, Double) -> Unit,
-    onDeleteExpense: (Expense) -> Unit
+    onDeleteExpense: (Expense) -> Unit,
+    onExportReport: (ExcelReportManager.ReportPeriod) -> Unit
 ) {
     // Math: Income = sum total in Deliver status
     val totalIncome = remember(orders) {
@@ -838,7 +841,10 @@ fun AccountingTabContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
-        // Daily Performance Metrics Dashboard
+       // Exportar Reporte Excel
+        item {
+            ExportReportCard(onExport = onExportReport)
+        } // Daily Performance Metrics Dashboard
         item {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
@@ -2489,6 +2495,44 @@ fun MonthlySubscriptionLockScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Desbloquear y Validar Licencia Mensual", fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+@Composable
+fun ExportReportCard(onExport: (ExcelReportManager.ReportPeriod) -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Icon(Icons.Filled.FileDownload, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(22.dp))
+                Text("Exportar Reporte Excel", style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+            }
+            Text(
+                text = "Genera un archivo .xlsx con órdenes, gastos y análisis de mejores días.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    Pair("Hoy", ExcelReportManager.ReportPeriod.DAY),
+                    Pair("Este Mes", ExcelReportManager.ReportPeriod.MONTH),
+                    Pair("Este Año", ExcelReportManager.ReportPeriod.YEAR)
+                ).forEach { (label, period) ->
+                    OutlinedButton(
+                        onClick = { onExport(period) },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(label, fontWeight = FontWeight.Medium, fontSize = 12.sp)
+                    }
                 }
             }
         }
