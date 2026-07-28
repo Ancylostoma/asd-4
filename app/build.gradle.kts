@@ -68,6 +68,7 @@ dependencies {
   implementation(libs.androidx.room.runtime)
   implementation(libs.converter.moshi)
   implementation(libs.firebase.ai)
+  implementation(libs.poi.ooxml)
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.logging.interceptor)
@@ -97,3 +98,14 @@ dependencies {
   "ksp"(libs.androidx.room.compiler)
   "ksp"(libs.moshi.kotlin.codegen)
 }
+
+// Requerido por Apache POI para evitar conflictos de empaquetado en Android
+android.packaging.resources.excludes += setOf(
+    "META-INF/DEPENDENCIES",
+    "META-INF/LICENSE",
+    "META-INF/LICENSE.txt",
+    "META-INF/NOTICE",
+    "META-INF/NOTICE.txt",
+    "META-INF/ASL2.0",
+    "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+)
