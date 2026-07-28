@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.local.AppDatabase
+import android.app.Application
+import com.example.util.ExcelReportManager
 import com.example.data.model.CatalogItem
 import com.example.data.model.Expense
 import com.example.data.model.Order
@@ -363,6 +365,23 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     fun wipeAllData(resetCatalog: Boolean) {
         viewModelScope.launch {
             repository.wipeAllForToday(resetCatalog)
+            // ── Exportar reporte Excel ────────────────────────────────────
+    fun exportExcelReport(period: ExcelReportManager.ReportPeriod) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val manager = ExcelReportManager(getApplication())
+                manager.generateAndShare(
+                    orders = orders.value,
+                    expenses = expenses.value,
+                    period = period
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
         }
     }
 }
+
+
