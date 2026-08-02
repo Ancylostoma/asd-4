@@ -2499,6 +2499,9 @@ fun MonthlySubscriptionLockScreen(
             }
         }
     }
+}
+}
+
 @Composable
 fun ExportReportCard(onExport: (ExcelReportManager.ReportPeriod) -> Unit) {
     Card(
